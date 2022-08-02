@@ -101,12 +101,11 @@ class MWDB(object):
                     params["query"] = query
                 # 'object', 'file', 'config' or 'blob'?
                 result = self.api.get(object_type.URL_TYPE, params=params)
-                key = object_type.URL_TYPE + "s"
+                key = f"{object_type.URL_TYPE}s"
                 if key not in result or len(result[key]) == 0:
                     return
                 for obj in result[key]:
-                    last_object = object_type.create(self.api, obj)
-                    yield last_object
+                    yield object_type.create(self.api, obj)
         except ObjectNotFoundError:
             return
 
@@ -172,8 +171,11 @@ class MWDB(object):
         elif isinstance(last_object, MWDBObject):
             # If we are requesting for typed objects, we should additionally check the object type
             if object_type is not MWDBObject and not isinstance(last_object, object_type):
-                raise TypeError("latest_object type must be 'str' or '{}'".format(object_type.__name__))
-            # If object instance provided: get ID from instance
+                raise TypeError(
+                    f"latest_object type must be 'str' or '{object_type.__name__}'"
+                )
+
+                # If object instance provided: get ID from instance
         else:
             # If not: first check whether object exists in repository
             last_object = self._query(object_type, last_object, raise_not_found=True)
@@ -187,10 +189,9 @@ class MWDB(object):
 
                     if obj.upload_time < last_object.upload_time:
                         raise RuntimeError(
-                            "Newly fetched object [{}] is older than the pivot [{}]".format(
-                                obj.id, last_object.id
-                            )
+                            f"Newly fetched object [{obj.id}] is older than the pivot [{last_object.id}]"
                         )
+
                 objects.append(obj)
 
             # Return fetched objects in reversed order (from oldest to latest)
@@ -485,7 +486,7 @@ class MWDB(object):
 
     def _count(self, object_type, query=None):
         params = {'query': query}
-        result = self.api.get(object_type.URL_TYPE + '/count', params=params)
+        result = self.api.get(f'{object_type.URL_TYPE}/count', params=params)
         return result["count"]
 
     def count(self, query=None):
@@ -669,7 +670,7 @@ class MWDB(object):
             "cfg": cfg,
             "config_type": config_type
         }
-        params.update(self._upload_params(**kwargs))
+        params |= self._upload_params(**kwargs)
         result = self.api.post("config", json=params)
         return MWDBConfig(self.api, result)
 
@@ -702,7 +703,7 @@ class MWDB(object):
             "blob_type": type,
             "content": content
         }
-        params.update(self._upload_params(**kwargs))
+        params |= self._upload_params(**kwargs)
         result = self.api.post("blob", json=params)
         return MWDBBlob(self.api, result)
 

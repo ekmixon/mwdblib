@@ -12,7 +12,7 @@ def get_formatter(output_format):
     }
     output_format = output_format.lstrip("=").split(",")
     formatter_class = TabularFormatter
-    for class_str in formatter_classes.keys():
+    for class_str in formatter_classes:
         if class_str in output_format:
             formatter_class = formatter_classes[class_str]
     return formatter_class(

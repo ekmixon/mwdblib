@@ -50,7 +50,7 @@ class MWDBComment(MWDBElement):
 
         :raises: requests.exceptions.HTTPError
         """
-        self.api.delete("object/{}/comment/{}".format(self.parent.id, self.id))
+        self.api.delete(f"object/{self.parent.id}/comment/{self.id}")
 
 
 # Backwards compatibility

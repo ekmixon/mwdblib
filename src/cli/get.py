@@ -37,7 +37,10 @@ def get_details(ctx, mwdb, formatter, file_or_hash):
         output = formatter.format_blob_detailed(obj)
     else:
         output = None  # just to satisfy linter
-        ctx.abort("TODO: Don't know how to represent this object type ({})".format(obj.object_type))
+        ctx.abort(
+            f"TODO: Don't know how to represent this object type ({obj.object_type})"
+        )
+
     click.echo(output)
 
 

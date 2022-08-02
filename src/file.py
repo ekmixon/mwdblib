@@ -132,7 +132,7 @@ class MWDBFile(MWDBObject):
            print("Downloaded {}".format(dropper.file_name))
         """
         token = self.api.post("request/sample/{id}".format(**self.data))["url"].split("/")[-1]
-        return self.api.get("download/{}".format(token), raw=True)
+        return self.api.get(f"download/{token}", raw=True)
 
 
 # Backwards compatibility

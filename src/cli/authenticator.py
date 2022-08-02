@@ -89,7 +89,7 @@ class MwdbAuthenticator(object):
         :param value: New value or None if field should be erased from configuration
         """
         if field not in self.CONFIG_FIELDS:
-            raise ValueError("Incorrect field '{}'".format(field))
+            raise ValueError(f"Incorrect field '{field}'")
         if not self.config.has_section("mwdb"):
             self.config.add_section("mwdb")
         if value is not None:

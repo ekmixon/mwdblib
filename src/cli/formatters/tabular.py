@@ -19,7 +19,7 @@ class TabularFormatter(ObjectFormatter):
                                               default_alignment=beautifultable.ALIGN_LEFT)
         table.set_style(beautifultable.STYLE_NONE)
         for key, formatter, value in data:
-            key = key + ":"
+            key = f"{key}:"
             if self.colorize:
                 key = click.style(key, bold=True)
             table.append_row([key, formatter.format(self, value)])
@@ -42,7 +42,10 @@ class TabularFormatter(ObjectFormatter):
                 )
                 break
         else:
-            raise RuntimeError("Terminal is too narrow (needed {}, got {})".format(sum_width, term_width))
+            raise RuntimeError(
+                f"Terminal is too narrow (needed {sum_width}, got {term_width})"
+            )
+
         for lines in table.stream(imap(row_formatter, rows)):
             for line in lines.splitlines():
                 yield line + "\n"
@@ -68,12 +71,10 @@ class TabularFormatter(ObjectFormatter):
 
     def format_file_row(self, file):
         return [
-            "{}\n{}".format(BoldFormatter().format(self, file.name),
-                            file.sha256),
+            f"{BoldFormatter().format(self, file.name)}\n{file.sha256}",
             SizeFormatter().format(self, file.size),
-            "{}\n{}".format(file.type,
-                            TagFormatter().format(self, file.tags)),
-            DateFormatter().format(self, file.upload_time)
+            f"{file.type}\n{TagFormatter().format(self, file.tags)}",
+            DateFormatter().format(self, file.upload_time),
         ]
 
     def format_file_list(self, files):
@@ -106,11 +107,10 @@ class TabularFormatter(ObjectFormatter):
 
     def format_config_row(self, config):
         return [
-            "{}\n{}".format(BoldFormatter().format(self, config.family),
-                            config.id),
+            f"{BoldFormatter().format(self, config.family)}\n{config.id}",
             config.type,
             TagFormatter().format(self, config.tags),
-            DateFormatter().format(self, config.upload_time)
+            DateFormatter().format(self, config.upload_time),
         ]
 
     def format_config_list(self, configs):
@@ -143,11 +143,10 @@ class TabularFormatter(ObjectFormatter):
 
     def format_blob_row(self, blob):
         return [
-            "{}\n{}".format(BoldFormatter().format(self, blob.name),
-                            blob.id),
+            f"{BoldFormatter().format(self, blob.name)}\n{blob.id}",
             blob.type,
             TagFormatter().format(self, blob.tags),
-            DateFormatter().format(self, blob.upload_time)
+            DateFormatter().format(self, blob.upload_time),
         ]
 
     def format_blob_list(self, blobs):
@@ -209,10 +208,12 @@ class TabularFormatter(ObjectFormatter):
         )
 
     def format_metakeys_list(self, metakeys):
-        return self.format_attr_table([
-            [key, AttributeFormatter(), "\n".join(value for value in metakeys[key])]
-            for key in sorted(metakeys.keys())
-        ])
+        return self.format_attr_table(
+            [
+                [key, AttributeFormatter(), "\n".join(metakeys[key])]
+                for key in sorted(metakeys.keys())
+            ]
+        )
 
     def print_empty_list(self):
         click.echo("No results.", err=True)

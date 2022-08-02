@@ -3,7 +3,9 @@ import hashlib
 
 
 def is_correct_hash(value):
-    return all(map(lambda c: c in "0123456789abcdef", value.lower())) and len(value) in [32, 40, 64, 128]
+    return all(map(lambda c: c in "0123456789abcdef", value.lower())) and len(
+        value
+    ) in {32, 40, 64, 128}
 
 
 class Hash(click.ParamType):

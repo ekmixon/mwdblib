@@ -63,7 +63,10 @@ class APIClient(object):
         self.session = requests.Session()
 
         from . import __version__
-        self.session.headers['User-Agent'] = "mwdblib/{} ".format(__version__) + self.session.headers['User-Agent']
+        self.session.headers['User-Agent'] = (
+            f"mwdblib/{__version__} " + self.session.headers['User-Agent']
+        )
+
 
         self.set_api_key(api_key)
 
@@ -84,7 +87,7 @@ class APIClient(object):
             except Exception:
                 raise InvalidCredentialsError("Invalid API key format. Verify whether actual token is provided "
                                               "instead of its UUID.")
-            self.session.headers.update({'Authorization': 'Bearer {}'.format(self.api_key)})
+            self.session.headers.update({'Authorization': f'Bearer {self.api_key}'})
 
     def login(self, username, password, warn=True):
         if warn:
@@ -155,21 +158,23 @@ class APIClient(object):
                     retry_after = 60
                 else:
                     retry_after = int(e.http_error.response.headers["Retry-After"])
-                warnings.warn("Rate limit exceeded. Sleeping for a {} seconds.".format(retry_after))
+                warnings.warn(f"Rate limit exceeded. Sleeping for a {retry_after} seconds.")
                 time.sleep(retry_after)
-                # Retry failed request...
+                        # Retry failed request...
             except (ConnectionError, GatewayError):
                 if not self.retry_on_downtime or downtime_retries == 0 or \
-                        (not self.retry_idempotent and method == "post"):
+                            (not self.retry_idempotent and method == "post"):
                     raise
                 downtime_retries -= 1
-                warnings.warn('Retrying request due to connectivity issues. '
-                              'Sleeping for {} seconds.'.format(self.downtime_timeout))
+                warnings.warn(
+                    f'Retrying request due to connectivity issues. Sleeping for {self.downtime_timeout} seconds.'
+                )
+
                 time.sleep(self.downtime_timeout)
-                # Retry failed request...
+                        # Retry failed request...
 
         try:
-            return response.json() if not raw else response.content
+            return response.content if raw else response.json()
         except ValueError:
             raise BadResponseError(
                 "Can't decode JSON response from server. "

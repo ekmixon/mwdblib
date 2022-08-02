@@ -34,7 +34,7 @@ def fetch_command(mwdb, hash, destination, keep_name):
             f.write(object.content)
     else:
         output_path = destination
-        with click.open_file(destination, "wb") as f:
+        with click.open_file(output_path, "wb") as f:
             f.write(object.content)
     return dict(message="Downloaded {object_id} => {output_path}",
                 object_id=object.id,

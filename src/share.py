@@ -46,10 +46,7 @@ class MWDBShareReason(object):
         """
         Returns str with unparsed reason string
         """
-        return "{} {}:{} by {}".format(self._data["reason_type"],
-                                       self._data["related_object_type"],
-                                       self._data["related_object_dhash"],
-                                       self._data["related_user_login"])
+        return f'{self._data["reason_type"]} {self._data["related_object_type"]}:{self._data["related_object_dhash"]} by {self._data["related_user_login"]}'
 
 
 class MWDBShare(MWDBElement):
